@@ -26,10 +26,11 @@ DEEPL_API_KEY = os.getenv("DEEPL_API_KEY")
 
 class VideoGenerator:
     def __init__(self):
+        # Configuration la plus simple possible du client OpenAI
         self.client = openai.OpenAI(
-            api_key=OPENAI_API_KEY,
-            base_url="https://api.openai.com/v1"  # URL par défaut de l'API
+            api_key=OPENAI_API_KEY
         )
+        
         self.topics = {
             "science": "Les exoplanètes habitables découvertes en 2024",
             "crypto": "L'impact des ETF Bitcoin sur le marché crypto",
