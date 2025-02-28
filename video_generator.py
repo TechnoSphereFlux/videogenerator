@@ -26,10 +26,8 @@ DEEPL_API_KEY = os.getenv("DEEPL_API_KEY")
 
 class VideoGenerator:
     def __init__(self):
-        # Configuration la plus simple possible du client OpenAI
-        self.client = openai.OpenAI(
-            api_key=OPENAI_API_KEY
-        )
+        # Configuration directe de la clé API OpenAI
+        openai.api_key = OPENAI_API_KEY
         
         self.topics = {
             "science": "Les exoplanètes habitables découvertes en 2024",
@@ -56,7 +54,7 @@ class VideoGenerator:
             Le script doit être en anglais, avoir un ton dynamique et durer environ 45-60 secondes.
             Utilise un langage simple et direct, avec des phrases courtes pour faciliter la lecture des sous-titres."""
             
-            response = self.client.chat.completions.create(
+            response = openai.ChatCompletion.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": "Tu es un expert en création de contenu viral pour TikTok. Génère uniquement le texte à dire, sans indications de mise en scène ou formatage."},
