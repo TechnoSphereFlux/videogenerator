@@ -61,12 +61,18 @@ jobs:
         # TikTok
         TIKTOK_SESSION: ${{ secrets.TIKTOK_SESSION }}
       run: |
+        # Crée le dossier videos s'il n'existe pas
+        mkdir -p videos
+        
         echo "$YOUTUBE_CLIENT_SECRETS" > youtube_credentials.json
         echo "$TIKTOK_SESSION" > tiktok_session.json
         python auto_generator.py
 
     - name: Upload Videos
+      if: always()  # Exécute cette étape même si la génération échoue
       uses: actions/upload-artifact@v4
       with:
         name: generated-videos
-        path: videos/ 
+        path: |
+          videos/
+          *.log 
