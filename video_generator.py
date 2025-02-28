@@ -11,6 +11,7 @@ from moviepy.config import change_settings
 from gtts import gTTS
 from pytrends.request import TrendReq
 import datetime
+import logging
 
 # Configuration de MoviePy
 change_settings({"IMAGEMAGICK_BINARY": r"C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe"})
@@ -457,10 +458,9 @@ class VideoGenerator:
             return False
 
     def get_trending_topics(self):
-        """Récupère les sujets tendances en science, crypto et IA"""
+        """Récupère les sujets tendances"""
         try:
-            print("\n📊 Analyse des tendances...")
-            
+            logging.info("Tentative de récupération des tendances...")
             # Configuration de Google Trends
             pytrends = TrendReq(hl='en-US', tz=360)
             
@@ -508,8 +508,9 @@ class VideoGenerator:
                     top_trend = trends[0].split(' (')[0]  # Retire le score entre parenthèses
                     self.topics[category] = f"Les dernières découvertes sur {top_trend}"
             
+            logging.info(f"Tendances récupérées avec succès : {self.topics}")
             return trending_topics
             
         except Exception as e:
-            print(f"❌ Erreur lors de l'analyse des tendances: {str(e)}")
+            logging.error(f"Erreur lors de la récupération des tendances : {str(e)}")
             return None 

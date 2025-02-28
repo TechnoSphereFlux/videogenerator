@@ -66,13 +66,16 @@ jobs:
         
         echo "$YOUTUBE_CLIENT_SECRETS" > youtube_credentials.json
         echo "$TIKTOK_SESSION" > tiktok_session.json
-        python auto_generator.py
+        # Exécute avec capture des erreurs
+        python auto_generator.py 2>&1 | tee output.log
+        cat output.log
 
-    - name: Upload Videos
+    - name: Upload Logs and Videos
       if: always()  # Exécute cette étape même si la génération échoue
       uses: actions/upload-artifact@v4
       with:
-        name: generated-videos
+        name: generated-content
         path: |
           videos/
-          *.log 
+          *.log
+          output.log 
