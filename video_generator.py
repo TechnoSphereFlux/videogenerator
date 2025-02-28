@@ -54,7 +54,8 @@ class VideoGenerator:
             Le script doit être en anglais, avoir un ton dynamique et durer environ 45-60 secondes.
             Utilise un langage simple et direct, avec des phrases courtes pour faciliter la lecture des sous-titres."""
             
-            response = openai.ChatCompletion.create(
+            # Nouvelle syntaxe pour l'API OpenAI v1.0+
+            response = openai.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": "Tu es un expert en création de contenu viral pour TikTok. Génère uniquement le texte à dire, sans indications de mise en scène ou formatage."},
@@ -65,9 +66,6 @@ class VideoGenerator:
             print(f"\n--- Script généré pour {topic_type} ---\n{script}\n")
             return script
             
-        except openai.AuthenticationError:
-            print("❌ Erreur d'authentification OpenAI - Vérifiez votre clé API")
-            return None
         except Exception as e:
             print(f"❌ Erreur lors de la génération du script: {str(e)}")
             return None
