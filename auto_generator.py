@@ -7,34 +7,44 @@ import os
 import sys
 from social_uploader import SocialUploader
 
-# Configuration du logging
+# Configuration du logging plus détaillée
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('video_generation.log'),
-        logging.StreamHandler(sys.stdout)  # Affiche aussi les logs dans la console
+        logging.FileHandler('debug.log'),
+        logging.StreamHandler()  # Affiche aussi dans la console
     ]
 )
 
 def generate_videos():
     """Génère les vidéos pour les 3 catégories"""
     try:
-        logging.info("🎬 Début de la génération des vidéos...")
+        logging.info("🚀 Démarrage de la génération des vidéos")
         
+        # Vérification des variables d'environnement
+        logging.info("Vérification des clés API...")
+        required_env_vars = ['OPENAI_API_KEY', 'DEEPL_API_KEY', 'YOUTUBE_CLIENT_SECRETS']
+        for var in required_env_vars:
+            if not os.getenv(var):
+                raise Exception(f"❌ Variable d'environnement manquante : {var}")
+            logging.info(f"✅ {var} trouvé")
+
         # Création du dossier pour la date du jour
-        today = datetime.now().strftime("%Y-%m-%d")
-        base_output_dir = f"videos/{today}"
+        logging.info("Création des dossiers...")
+        base_output_dir = "videos"
         os.makedirs(base_output_dir, exist_ok=True)
         
         generator = VideoGenerator()
         
-        # 1. Récupération des sujets tendances
-        logging.info("📊 Analyse des tendances...")
+        # Récupération des sujets tendances
+        logging.info("Récupération des tendances...")
         trends = generator.get_trending_topics()
         if not trends:
             raise Exception("Impossible de récupérer les tendances")
             
+        logging.info(f"Tendances trouvées : {trends}")
+        
         uploader = SocialUploader()
         
         # 2. Génération des vidéos pour chaque catégorie
@@ -85,4 +95,8 @@ def generate_videos():
         logging.info("✨ Génération des vidéos terminée!")
         
     except Exception as e:
-        logging.error(f"❌ Erreur générale: {str(e)}") 
+        logging.error(f"❌ Erreur générale : {str(e)}")
+        raise e
+
+if __name__ == "__main__":
+    generate_videos() 
