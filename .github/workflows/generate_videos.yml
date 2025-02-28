@@ -1,0 +1,61 @@
+name: Generate Videos
+
+on:
+  schedule:
+    - cron: '0 6,14,22 * * *'  # Exécution à 6h, 14h et 22h UTC
+  workflow_dispatch:  # Permet aussi le déclenchement manuel
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'
+    
+    - name: Install ImageMagick
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y imagemagick
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install openai deepl moviepy pillow pytrends gtts requests python-dotenv
+        pip install google-auth-oauthlib google-auth-httplib2 google-api-python-client
+        pip install instabot tiktok-uploader
+
+    - name: Generate and Upload Videos
+      env:
+        # OpenAI pour la génération de scripts
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        
+        # DeepL pour les traductions
+        DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+        
+        # YouTube
+        YOUTUBE_CLIENT_SECRETS: ${{ secrets.YOUTUBE_CLIENT_SECRETS }}
+        
+        # Instagram
+        INSTAGRAM_USERNAME: "technosphereflux"
+        INSTAGRAM_PASSWORD: ${{ secrets.INSTAGRAM_PASSWORD }}
+        
+        # Pexels pour les images
+        PEXELS_API_KEY: "0Nd2ZIJSJHGRp1x4cBwauCPuCIH08CexznNpsuAw1sIbTaLH4wHRMN3d"
+        
+        # TikTok
+        TIKTOK_SESSION: ${{ secrets.TIKTOK_SESSION }}
+      run: |
+        echo "$YOUTUBE_CLIENT_SECRETS" > youtube_credentials.json
+        echo "$TIKTOK_SESSION" > tiktok_session.json
+        python auto_generator.py
+
+    - name: Upload Videos
+      uses: actions/upload-artifact@v2
+      with:
+        name: generated-videos
+        path: videos/ 
